@@ -142,18 +142,15 @@ $(document).ready(function() {
     if (response.data.redirect_url) {
       window.location.href = response.data.redirect_url;
     } else {
-      window.location.href = 'https://www.tiendasvm.com.mx/inicio/confirmacion';
+      alert('✅ Pago procesado correctamente. ¡Gracias por tu compra!');
+      $('#pay-button').prop('disabled', false).text('🔒 PAGAR AHORA');
     }
   };
 
   var error_callback = function(response) {
     var codigo = response.data ? response.data.error_code : 'default';
-    var mensaje = obtenerMensaje(codigo);
-    $('#error-msg').html('⚠️ ' + mensaje).show();
+    $('#error-msg').html('⚠️ ' + obtenerMensaje(codigo)).show();
     $('#pay-button').prop('disabled', false).text('🔒 PAGAR AHORA');
-    setTimeout(function() {
-      window.location.href = 'https://www.tiendasvm.com.mx/inicio/error-pago';
-    }, 3000);
   };
 
 });
