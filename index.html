@@ -1,60 +1,48 @@
 $(document).ready(function() {
-
-    // CONFIGURACIÓN
+    // Configuración con tus credenciales
     OpenPay.setId('mcu1a7seu2rgu8lpnwes');
     OpenPay.setApiKey('pk_24ea7677c1384ad4b148a39fcb0ce0cb');
-    OpenPay.setSandboxMode(true); // Cambia a false cuando ya no sea prueba
+    OpenPay.setSandboxMode(true); // Cambiar a false en producción
 
-    // Configuración del fraude
+    // Genera el ID de sesión para prevención de fraude
     var deviceSessionId = OpenPay.deviceData.setup("payment-form", "device_session_id");
-
-    var mensajesError = {
-        '1000': 'Servicio no disponible en este momento.',
-        '2004': 'La tarjeta ha expirado.',
-        '2005': 'La tarjeta ha sido rechazada por el banco.',
-        '3001': 'La tarjeta fue declinada por el banco.',
-        '3002': 'La tarjeta ha expirado.',
-        '3003': 'Fondos insuficientes.',
-        '3004': 'La tarjeta ha sido retenida/robada.',
-        '3005': 'La tarjeta fue rechazada por el sistema de fraude.',
-        'default': 'Error al procesar el pago. Verifique sus datos.'
-    };
 
     $('#payment-form').submit(function(event) {
         event.preventDefault();
-        $("#pay-button").prop("disabled", true).text("Procesando...");
+        $("#pay-button").prop("disabled", true).text("Validando...");
         $("#error-msg").hide();
 
-        // PASO 1: Crear el Token
+        // Crear el token (Paso obligatorio)
         OpenPay.token.extract_form_and_create("payment-form", success_callback, error_callback);
     });
 
-    // Si el TOKEN es exitoso
     var success_callback = function(response) {
         var token_id = response.data.id;
         $('#token_id').val(token_id);
         
-        // ¡OJO AQUÍ! 
-        // Para que el pago NO sea siempre exitoso de mentira, 
-        // aquí debes enviar el token_id a tu backend (PHP/Node) para hacer el charge.
-        // Si no tienes backend, el pago nunca se completa en la cuenta de Openpay.
+        // ¡IMPORTANTE! Aquí es donde el proceso se detiene en GitHub.
+        // Necesitas enviar este token_id a un servidor para completar el CARGO.
+        alert("Token creado: " + token_id + ". Ahora se requiere un backend para cobrar.");
         
-        console.log("Token creado correctamente: " + token_id);
-        
-        // Redirección simulada para tu prueba
-        window.location.href = "https://www.tiendasvm.com.mx/inicio/confirmacion";
+        // Redirección de prueba
+        window.location.href = "https://tiendasvm.com.mx";
     };
 
-    // Si hay un ERROR (Aquí manejas los rechazos)
     var error_callback = function(response) {
-        var codigo = response.data ? response.data.error_code : 'default';
-        var mensaje = mensajesError[codigo] || mensajesError['default'];
+        var desc = response.data ? response.data.description : response.message;
+        var code = response.data ? response.data.error_code : 0;
         
-        $("#error-msg").text("⚠️ " + mensaje).fadeIn();
+        // Mapeo de rechazos comunes
+        var errorMsg = "Error: ";
+        switch(code) {
+            case 3001: errorMsg = "Tarjeta declinada por el banco."; break;
+            case 3002: errorMsg = "La tarjeta ha expirado."; break;
+            case 3003: errorMsg = "Fondos insuficientes."; break;
+            case 3005: errorMsg = "Rechazado por el sistema antifraude."; break;
+            default: errorMsg = "Datos inválidos: " + desc;
+        }
+        
+        $("#error-msg").text("⚠️ " + errorMsg).show();
         $("#pay-button").prop("disabled", false).text("🔒 PAGAR AHORA");
-        
-        // Log para depuración
-        console.error("Error Openpay: ", response);
     };
-
 });
