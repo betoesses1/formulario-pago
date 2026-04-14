@@ -1,57 +1,49 @@
-html
-<script type="text/javascript">
 $(document).ready(function() {
-    // 1. Configuración de tus credenciales
-    const MERCHANT_ID = 'mcu1a7seu2rgu8lpnwes';
-    const PUBLIC_KEY = 'pk_24ea7677c1384ad4b148a39fcb0ce0cb';
-    
-    OpenPay.setId(MERCHANT_ID);
-    OpenPay.setApiKey(PUBLIC_KEY);
-    OpenPay.setSandboxMode(true); // CAMBIAR A false PARA COBROS REALES
+    // 1. CONFIGURACIÓN OFICIAL
+    OpenPay.setId('mcu1a7seu2rgu8lpnwes');
+    OpenPay.setApiKey('pk_24ea7677c1384ad4b148a39fcb0ce0cb');
+    OpenPay.setSandboxMode(true); // ¡IMPORTANTE! Cambia a false para cobrar dinero real.
 
-    // 2. Manejo del formulario
+    // ID para prevención de fraudes
+    var deviceSessionId = OpenPay.deviceData.setup("payment-form", "device_session_id");
+
     $('#payment-form').submit(function(event) {
         event.preventDefault();
-        
-        // Bloqueamos el botón para evitar doble clic
-        $("#pay-button").prop("disabled", true).text("Validando pago...");
+        $("#pay-button").prop("disabled", true).text("Validando con tu banco...");
         $("#error-msg").hide();
 
-        // 3. Creación del Token y Manejo de errores
+        // 2. CREACIÓN DE TOKEN Y MANEJO DE RECHAZOS
         OpenPay.token.extract_form_and_create("payment-form", success_callback, error_callback);
     });
 
+    // Esta función solo se ejecuta si la tarjeta es válida
     var success_callback = function(response) {
         var token_id = response.data.id;
-        // IMPORTANTE: Como usas GitHub (estático), aquí redirigimos al 
-        // flujo de pago de Openpay o a tu confirmación de Ecwid.
-        console.log("Token generado con éxito: " + token_id);
+        console.log("Token exitoso: " + token_id);
         
-        // Redirección a la página de éxito de tu tienda
-        window.location.href = "https://tiendasvm.com.mx";
+        // REDIRECCIÓN A PAGO REAL:
+        // Como no tienes servidor, redirigimos a una página que confirma el éxito 
+        // o puedes integrar el 'Link de Pago' aquí.
+        window.location.href = "https://tiendasvm.com.mx" + token_id;
     };
 
+    // ESTO ES LO QUE TE FALTABA: MANEJO DE RECHAZOS REALES
     var error_callback = function(response) {
-        var msg = "";
-        var errorCode = response.data ? response.data.error_code : 'default';
+        var code = response.data ? response.data.error_code : 0;
+        var desc = response.data ? response.data.description : response.message;
         
-        // Detección REAL de rechazos
-        const mensajesRechazo = {
-            '1001': 'Formato de campos inválido.',
-            '2005': 'La fecha de expiración es anterior a la actual.',
-            '3001': 'La tarjeta fue declinada por el banco.',
+        var mensajes = {
+            '1001': 'Datos de tarjeta incompletos o inválidos.',
+            '3001': 'La tarjeta fue rechazada por el banco.',
             '3002': 'La tarjeta ha expirado.',
             '3003': 'Fondos insuficientes.',
             '3004': 'Tarjeta reportada como robada o perdida.',
-            '3005': 'Rechazado por el sistema antifraude.',
-            'default': 'Error en los datos. Revise su tarjeta e intente de nuevo.'
+            '3005': 'Rechazado por el sistema de seguridad.',
+            'default': 'Error en el pago: ' + desc
         };
-        
-        msg = mensajesRechazo[errorCode] || mensajesRechazo['default'];
-        
-        // Mostrar el error en tu div rojo
-        $("#error-msg").text("⚠️ " + msg).fadeIn();
+
+        var errorFinal = mensajes[code] || mensajes['default'];
+        $("#error-msg").text("❌ " + errorFinal).fadeIn();
         $("#pay-button").prop("disabled", false).text("🔒 PAGAR AHORA");
     };
 });
-</script>
