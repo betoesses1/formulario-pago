@@ -1,49 +1,38 @@
 $(document).ready(function() {
-    // 1. CONFIGURACIÓN OFICIAL
+    // Configuración con tus credenciales confirmadas
     OpenPay.setId('mcu1a7seu2rgu8lpnwes');
     OpenPay.setApiKey('pk_24ea7677c1384ad4b148a39fcb0ce0cb');
-    OpenPay.setSandboxMode(true); // ¡IMPORTANTE! Cambia a false para cobrar dinero real.
+    OpenPay.setSandboxMode(true); // Cambia a false cuando pases a producción
 
-    // ID para prevención de fraudes
+    // Prevención de fraude obligatoria
     var deviceSessionId = OpenPay.deviceData.setup("payment-form", "device_session_id");
 
     $('#payment-form').submit(function(event) {
         event.preventDefault();
-        $("#pay-button").prop("disabled", true).text("Validando con tu banco...");
+        $("#pay-button").prop("disabled", true).text("Validando...");
         $("#error-msg").hide();
 
-        // 2. CREACIÓN DE TOKEN Y MANEJO DE RECHAZOS
+        // 1. CREAR TOKEN
         OpenPay.token.extract_form_and_create("payment-form", success_callback, error_callback);
     });
 
-    // Esta función solo se ejecuta si la tarjeta es válida
     var success_callback = function(response) {
         var token_id = response.data.id;
-        console.log("Token exitoso: " + token_id);
-        
-        // REDIRECCIÓN A PAGO REAL:
-        // Como no tienes servidor, redirigimos a una página que confirma el éxito 
-        // o puedes integrar el 'Link de Pago' aquí.
+        // Para que el pago sea real en una página estática (GitHub), 
+        // aquí debes redirigir al flujo de cargo o usar el ID para tu backend.
         window.location.href = "https://tiendasvm.com.mx" + token_id;
     };
 
-    // ESTO ES LO QUE TE FALTABA: MANEJO DE RECHAZOS REALES
     var error_callback = function(response) {
-        var code = response.data ? response.data.error_code : 0;
-        var desc = response.data ? response.data.description : response.message;
-        
+        var code = response.data ? response.data.error_code : 'default';
         var mensajes = {
-            '1001': 'Datos de tarjeta incompletos o inválidos.',
-            '3001': 'La tarjeta fue rechazada por el banco.',
+            '3001': 'Tarjeta declinada por el banco.',
             '3002': 'La tarjeta ha expirado.',
             '3003': 'Fondos insuficientes.',
-            '3004': 'Tarjeta reportada como robada o perdida.',
-            '3005': 'Rechazado por el sistema de seguridad.',
-            'default': 'Error en el pago: ' + desc
+            '3005': 'Rechazado por el sistema antifraude.',
+            'default': 'Error: ' + (response.data ? response.data.description : 'Intente de nuevo')
         };
-
-        var errorFinal = mensajes[code] || mensajes['default'];
-        $("#error-msg").text("❌ " + errorFinal).fadeIn();
+        $("#error-msg").text("⚠️ " + (mensajes[code] || mensajes['default'])).fadeIn();
         $("#pay-button").prop("disabled", false).text("🔒 PAGAR AHORA");
     };
 });
