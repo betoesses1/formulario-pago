@@ -12,14 +12,12 @@
 
 <div style="max-width:460px; width:100%; margin:auto; padding:24px; border:1px solid #ddd; border-radius:12px; background:#fff;">
 
-  <!-- Encabezado -->
   <div style="text-align:center; margin-bottom:20px;">
     <h3 style="color:#004481; margin:0 0 6px;">🔒 Pago Seguro</h3>
     <p style="font-size:13px; color:#666; margin:0;">Procesado por</p>
-    <img src="https://www.openpay.mx/img/openpay-color.png" style="height:28px; margin-top:6px;" alt="OpenPay">
+    <div style="display:inline-block; padding:4px 12px; border:2px solid #004481; border-radius:6px; color:#004481; font-weight:900; font-size:16px; letter-spacing:1px;">open<span style="color:#00C3A0;">pay</span></div>
   </div>
 
-  <!-- Logos marcas -->
   <div style="display:flex; justify-content:center; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:18px; padding:10px; background:#f9f9f9; border-radius:8px;">
     <span style="font-size:11px; color:#888; width:100%; text-align:center; margin-bottom:4px;">Métodos de pago aceptados:</span>
     <svg width="50" height="30" viewBox="0 0 50 30" style="background:#1A1F71; border-radius:4px; padding:4px;">
@@ -36,7 +34,6 @@
     <div style="background:#F5A623; color:white; border-radius:4px; padding:4px 8px; font-size:9px; font-weight:900; text-align:center;">EFECTIVO<br><span style="font-size:7px; font-weight:400;">Paynet/OXXO</span></div>
   </div>
 
-  <!-- Formulario -->
   <form id="payment-form">
     <input type="hidden" name="token_id" id="token_id">
     <input type="hidden" name="device_session_id" id="device_session_id">
@@ -45,46 +42,36 @@
 
     <div style="margin-bottom:12px;">
       <label style="font-size:13px; font-weight:bold; color:#333;">Nombre del titular</label><br>
-      <input type="text" data-openpay-card="holder_name"
-             style="width:100%; padding:10px; box-sizing:border-box; border:1px solid #ccc; border-radius:6px; font-size:14px; margin-top:4px;"
-             placeholder="Como aparece en la tarjeta">
+      <input type="text" data-openpay-card="holder_name" style="width:100%; padding:10px; box-sizing:border-box; border:1px solid #ccc; border-radius:6px; font-size:14px; margin-top:4px;" placeholder="Como aparece en la tarjeta">
     </div>
 
     <div style="margin-bottom:12px;">
       <label style="font-size:13px; font-weight:bold; color:#333;">Número de tarjeta</label><br>
-      <input type="text" data-openpay-card="card_number"
-             style="width:100%; padding:10px; box-sizing:border-box; border:1px solid #ccc; border-radius:6px; font-size:14px; margin-top:4px;"
-             placeholder="1234 5678 9012 3456" maxlength="16">
+      <input type="text" data-openpay-card="card_number" style="width:100%; padding:10px; box-sizing:border-box; border:1px solid #ccc; border-radius:6px; font-size:14px; margin-top:4px;" placeholder="1234 5678 9012 3456" maxlength="16">
     </div>
 
     <div style="display:flex; gap:10px; margin-bottom:12px;">
       <div style="flex:1;">
         <label style="font-size:13px; font-weight:bold; color:#333;">Mes</label><br>
-        <input type="text" data-openpay-card="expiration_month" placeholder="MM" maxlength="2"
-               style="width:100%; padding:10px; box-sizing:border-box; border:1px solid #ccc; border-radius:6px; font-size:14px; margin-top:4px;">
+        <input type="text" data-openpay-card="expiration_month" placeholder="MM" maxlength="2" style="width:100%; padding:10px; box-sizing:border-box; border:1px solid #ccc; border-radius:6px; font-size:14px; margin-top:4px;">
       </div>
       <div style="flex:1;">
         <label style="font-size:13px; font-weight:bold; color:#333;">Año</label><br>
-        <input type="text" data-openpay-card="expiration_year" placeholder="AA" maxlength="2"
-               style="width:100%; padding:10px; box-sizing:border-box; border:1px solid #ccc; border-radius:6px; font-size:14px; margin-top:4px;">
+        <input type="text" data-openpay-card="expiration_year" placeholder="AA" maxlength="2" style="width:100%; padding:10px; box-sizing:border-box; border:1px solid #ccc; border-radius:6px; font-size:14px; margin-top:4px;">
       </div>
       <div style="flex:1;">
         <label style="font-size:13px; font-weight:bold; color:#333;">CVV</label><br>
-        <input type="text" data-openpay-card="cvv2" placeholder="123" maxlength="4"
-               style="width:100%; padding:10px; box-sizing:border-box; border:1px solid #ccc; border-radius:6px; font-size:14px; margin-top:4px;">
+        <input type="text" data-openpay-card="cvv2" placeholder="123" maxlength="4" style="width:100%; padding:10px; box-sizing:border-box; border:1px solid #ccc; border-radius:6px; font-size:14px; margin-top:4px;">
       </div>
     </div>
 
-    <!-- Aviso 3D Secure -->
     <div style="background:#e8f4fd; border:1px solid #b3d7f0; border-radius:6px; padding:10px; margin-bottom:14px; font-size:12px; color:#004481; display:flex; align-items:center; gap:8px;">
       🔐 <span>Tu banco verificará esta compra con <strong>3D Secure</strong> para mayor seguridad.</span>
     </div>
 
-    <!-- Error -->
     <div id="error-msg" style="display:none; background:#fff0f0; border:1px solid #ffcccc; color:#cc0000; border-radius:6px; padding:10px; margin-bottom:12px; font-size:13px;"></div>
 
-    <button type="submit" id="pay-button"
-            style="width:100%; background:#004481; color:white; padding:14px; border:none; border-radius:6px; cursor:pointer; font-weight:bold; font-size:16px;">
+    <button type="submit" id="pay-button" style="width:100%; background:#004481; color:white; padding:14px; border:none; border-radius:6px; cursor:pointer; font-weight:bold; font-size:16px;">
       🔒 PAGAR AHORA
     </button>
   </form>
@@ -97,47 +84,18 @@
 
 <script type="text/javascript">
 $(document).ready(function() {
-
   OpenPay.setId('mcu1a7seu2rgu8lpnwes');
   OpenPay.setApiKey('pk_24ea7677c1384ad4b148a39fcb0ce0cb');
-  OpenPay.setSandboxMode(true); // ⚠️ Cambiar a false para producción
-
+  OpenPay.setSandboxMode(true);
   OpenPay.deviceData.setup("payment-form", "device_session_id");
-
-  var mensajesError = {
-    '1001': 'Ingrese sus datos correctamente e inténtelo de nuevo.',
-    '1004': 'Error de pago, comuníquese con su banco e inténtelo de nuevo.',
-    '1005': 'Error de pago, comuníquese con su banco e inténtelo de nuevo.',
-    '2002': 'Tarjeta rechazada. Ingrese sus datos correctamente e inténtelo de nuevo.',
-    '2003': 'Tarjeta rechazada. Comuníquese con su banco e ingrese sus datos correctamente.',
-    '2004': 'Consulte el saldo de su tarjeta e inténtelo más tarde.',
-    '2007': 'Tarjeta rechazada. Ingrese sus datos correctamente e inténtelo de nuevo.',
-    '2008': 'Tarjeta rechazada. Comuníquese con su banco e ingrese sus datos correctamente.',
-    '2009': 'Ingrese sus datos correctamente e inténtelo de nuevo.',
-    '2010': 'Transacción fallida. Comuníquese con su banco e ingrese sus datos correctamente.',
-    '3001': 'Tarjeta rechazada. Comuníquese con su banco e inténtelo de nuevo.',
-    '3002': 'Consulte el saldo de su tarjeta e inténtelo más tarde.',
-    '3003': 'Tarjeta rechazada. Comuníquese con su banco e inténtelo de nuevo.',
-    '3004': 'Tarjeta rechazada. Comuníquese con su banco e inténtelo de nuevo.',
-    '3005': 'Tarjeta rechazada. Comuníquese con su banco e inténtelo de nuevo.',
-    '3006': 'Transacción fallida. Comuníquese con su banco e ingrese sus datos correctamente.',
-    '3009': 'Tarjeta rechazada. Comuníquese con su banco e inténtelo de nuevo.',
-    '3010': 'Tarjeta rechazada. Comuníquese con su banco e inténtelo de nuevo.',
-    '3011': 'Tarjeta rechazada. Comuníquese con su banco e inténtelo de nuevo.',
-    'default': 'Transacción fallida. Comuníquese con su banco e ingrese sus datos correctamente.'
-  };
-
-  function obtenerMensaje(codigo) {
-    return mensajesError[String(codigo)] || mensajesError['default'];
-  }
-
+  var mensajesError = {'1001':'Ingrese sus datos correctamente e inténtelo de nuevo.','1004':'Error de pago, comuníquese con su banco e inténtelo de nuevo.','1005':'Error de pago, comuníquese con su banco e inténtelo de nuevo.','2002':'Tarjeta rechazada. Ingrese sus datos correctamente e inténtelo de nuevo.','2003':'Tarjeta rechazada. Comuníquese con su banco e ingrese sus datos correctamente.','2004':'Consulte el saldo de su tarjeta e inténtelo más tarde.','2007':'Tarjeta rechazada. Ingrese sus datos correctamente e inténtelo de nuevo.','2008':'Tarjeta rechazada. Comuníquese con su banco e ingrese sus datos correctamente.','2009':'Ingrese sus datos correctamente e inténtelo de nuevo.','2010':'Transacción fallida. Comuníquese con su banco e ingrese sus datos correctamente.','3001':'Tarjeta rechazada. Comuníquese con su banco e inténtelo de nuevo.','3002':'Consulte el saldo de su tarjeta e inténtelo más tarde.','3003':'Tarjeta rechazada. Comuníquese con su banco e inténtelo de nuevo.','3004':'Tarjeta rechazada. Comuníquese con su banco e inténtelo de nuevo.','3005':'Tarjeta rechazada. Comuníquese con su banco e inténtelo de nuevo.','3006':'Transacción fallida. Comuníquese con su banco e ingrese sus datos correctamente.','3009':'Tarjeta rechazada. Comuníquese con su banco e inténtelo de nuevo.','3010':'Tarjeta rechazada. Comuníquese con su banco e inténtelo de nuevo.','3011':'Tarjeta rechazada. Comuníquese con su banco e inténtelo de nuevo.','default':'Transacción fallida. Comuníquese con su banco e ingrese sus datos correctamente.'};
+  function obtenerMensaje(codigo) { return mensajesError[String(codigo)] || mensajesError['default']; }
   $('#payment-form').on('submit', function(e) {
     e.preventDefault();
     $('#error-msg').hide();
     $('#pay-button').prop('disabled', true).text('⏳ Procesando...');
     OpenPay.token.extractFormAndCreate('payment-form', success_callback, error_callback);
   });
-
   var success_callback = function(response) {
     if (response.data.redirect_url) {
       window.location.href = response.data.redirect_url;
@@ -146,13 +104,11 @@ $(document).ready(function() {
       $('#pay-button').prop('disabled', false).text('🔒 PAGAR AHORA');
     }
   };
-
   var error_callback = function(response) {
     var codigo = response.data ? response.data.error_code : 'default';
     $('#error-msg').html('⚠️ ' + obtenerMensaje(codigo)).show();
     $('#pay-button').prop('disabled', false).text('🔒 PAGAR AHORA');
   };
-
 });
 </script>
 
