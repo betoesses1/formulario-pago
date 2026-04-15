@@ -49,8 +49,8 @@ app.get("/pagar", async (_req, res) => {
       redirect_url: "https://www.tiendasvm.com.mx/inicio/confirmacion"
     };
 
-    const response = await axios.post(
-      `https://sandbox-api.openpay.co/v1/${merchantId}/charges`,
+   const response = await axios.post(
+  `https://sandbox-api.openpay.mx/v1/${merchantId}/charges`,
       payload,
       {
         headers: {
