@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pago Seguro - VM Tecnología</title>
+  <style>
+    body{
+      margin:0;
+      font-family:Arial,sans-serif;
+      background:#f5f5f5;
+      color:#222;
+    }
+    .wrap{
+      max-width:520px;
+      margin:40px auto;
+      background:#fff;
+      border:1px solid #ddd;
+      border-radius:14px;
+      padding:24px;
+      box-shadow:0 8px 24px rgba(0,0,0,.06);
+    }
+    .center{text-align:center}
+    .logo{
+      max-width:180px;
+      height:auto;
+      margin-bottom:12px;
+    }
+    .logos{
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+      background:#f9f9f9;
+      border-radius:10px;
+      padding:12px;
+      margin:18px 0;
+    }
+    .logos span{
+      width:100%;
+      text-align:center;
+      font-size:12px;
+      color:#666;
+      margin-bottom:4px;
+    }
+    .logos img{
+      height:30px;
+      width:auto;
+    }
+    .box{
+      border:1px solid #d8e6f3;
+      background:#f7fbff;
+      border-radius:10px;
+      padding:14px;
+      margin:14px 0;
+    }
+    .title{
+      color:#004481;
+      margin:0 0 8px;
+    }
+    .price{
+      font-size:28px;
+      font-weight:700;
+      color:#004481;
+      margin:10px 0;
+    }
+    .btn{
+      display:block;
+      width:100%;
+      text-align:center;
+      background:#004481;
+      color:#fff;
+      text-decoration:none;
+      padding:14px;
+      border-radius:8px;
+      font-weight:700;
+      margin-top:18px;
+    }
+    .small{
+      font-size:12px;
+      color:#666;
+      line-height:1.5;
+    }
+    ul{
+      padding-left:18px;
+      margin:8px 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="center">
+      <img src="LogotipoOpenpay-01.jpg" alt="Openpay" class="logo">
+      <h2 class="title">Pago Seguro</h2>
+      <div class="small">Procesado con Openpay</div>
+    </div>
+
+    <div class="logos">
+      <span>Métodos de pago aceptados</span>
+      <img src="visa.png" alt="Visa">
+      <img src="masterCard.png" alt="Mastercard">
+      <img src="americanExpress.png" alt="American Express">
+      <img src="carnet.png" alt="Carnet">
+      <img src="spei.png" alt="SPEI">
+    </div>
+
+    <div class="box">
+      <strong>Producto / servicio</strong>
+      <ul>
+        <li>Pago de pedido VM Tecnología</li>
+        <li>Referencia: Pedido de prueba</li>
+        <li>Descripción: Compra de producto / servicio publicado por el comercio</li>
+      </ul>
+      <div class="price">$100.00 MXN</div>
+    </div>
+
+    <div class="box small">
+      <strong>Datos del comercio</strong><br>
+      VM Tecnología / Tiendas VM<br>
+      Sitio seguro con SSL<br>
+      Atención a clientes: contacto@tiendasvm.com.mx
+    </div>
+
+    <a class="btn" href="https://TU-BACKEND-RENDER.onrender.com/pagar">
+      Pagar ahora
+    </a>
+
+    <div class="small" style="margin-top:18px;">
+      Al continuar aceptas nuestros términos, condiciones y aviso de privacidad.<br>
+      Esta página muestra claramente el producto/servicio y el monto a pagar.
+    </div>
+  </div>
+</body>
+</html>
