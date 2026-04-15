@@ -13,8 +13,8 @@ app.get("/health", (_req, res) => {
 
 app.get("/pagar", async (_req, res) => {
   try {
-    const merchantId = process.env.OPENPAY_MERCHANT_ID;
-    const privateKey = process.env.OPENPAY_PRIVATE_KEY;
+const merchantId = (process.env.OPENPAY_MERCHANT_ID || "").trim();
+const privateKey = (process.env.OPENPAY_PRIVATE_KEY || "").trim();
 
     if (!merchantId || !privateKey) {
       return res.status(500).send("Faltan variables de entorno de Openpay.");
@@ -67,4 +67,15 @@ app.get("/pagar", async (_req, res) => {
 
 app.listen(port, "0.0.0.0", () => {
   console.log(`Servidor activo en puerto ${port}`);
+});
+app.get("/debug-env", (_req, res) => {
+  const merchantId = (process.env.OPENPAY_MERCHANT_ID || "").trim();
+  const privateKey = (process.env.OPENPAY_PRIVATE_KEY || "").trim();
+
+  res.json({
+    merchantIdMasked: merchantId ? `${merchantId.slice(0, 4)}...${merchantId.slice(-4)}` : "VACIO",
+    merchantIdLength: merchantId.length,
+    privateKeyMasked: privateKey ? `${privateKey.slice(0, 3)}...${privateKey.slice(-4)}` : "VACIO",
+    privateKeyLength: privateKey.length
+  });
 });
