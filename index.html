@@ -5,26 +5,123 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Pago Seguro - VM Tecnología</title>
   <style>
-    *{box-sizing:border-box}
-    body{margin:0;font-family:Arial,sans-serif;background:#f5f5f5;color:#222;padding:30px 15px}
-    .wrap{max-width:580px;margin:0 auto;background:#fff;border:1px solid #ddd;border-radius:18px;padding:28px;box-shadow:0 8px 24px rgba(0,0,0,.06)}
-    .center{text-align:center}
-    .openpay-logo{max-width:180px;width:100%;height:auto;margin-bottom:10px}
-    h1{margin:8px 0 6px;color:#004481;font-size:36px;line-height:1.1}
-    .subtitle{color:#666;margin-bottom:18px;font-size:15px}
-    .logos{display:flex;justify-content:center;align-items:center;gap:10px;flex-wrap:wrap;background:#f9f9f9;border-radius:12px;padding:14px;margin:20px 0}
-    .logos span{width:100%;text-align:center;color:#777;font-size:12px;margin-bottom:4px}
-    .logos img{height:32px;width:auto;object-fit:contain}
-    .box{border:1px solid #dfe7f0;border-radius:12px;background:#fbfdff;padding:16px;margin:16px 0}
-    .box h3{margin:0 0 10px;color:#004481;font-size:18px}
-    .price{font-size:34px;font-weight:700;color:#004481;margin:10px 0}
-    .small{font-size:13px;line-height:1.55;color:#444}
-    .msglist{margin:8px 0 0 18px;padding:0}
-    .msglist li{margin-bottom:6px}
-    .cta{display:block;width:100%;text-align:center;background:#004481;color:#fff;text-decoration:none;padding:16px;border-radius:10px;font-weight:700;font-size:24px;margin-top:18px}
-    .note{font-size:12px;color:#666;margin-top:10px}
-    .footer{text-align:center;margin-top:18px;font-size:12px;color:#777;line-height:1.5}
-    .footer a{color:#004481;text-decoration:none}
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 24px 16px;
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
+      color: #222;
+    }
+    .wrap {
+      max-width: 620px;
+      margin: 0 auto;
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 18px;
+      padding: 28px;
+      box-shadow: 0 8px 24px rgba(0,0,0,.06);
+    }
+    .center { text-align: center; }
+    .openpay-logo {
+      max-width: 180px;
+      width: 100%;
+      height: auto;
+      margin-bottom: 10px;
+    }
+    h1 {
+      margin: 8px 0 6px;
+      color: #004481;
+      font-size: 36px;
+      line-height: 1.1;
+    }
+    .subtitle {
+      color: #666;
+      margin-bottom: 18px;
+      font-size: 15px;
+    }
+    .logos {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      background: #f9f9f9;
+      border-radius: 12px;
+      padding: 14px;
+      margin: 20px 0;
+    }
+    .logos span {
+      width: 100%;
+      text-align: center;
+      color: #777;
+      font-size: 12px;
+      margin-bottom: 4px;
+    }
+    .logos img {
+      height: 32px;
+      width: auto;
+      object-fit: contain;
+    }
+    .box {
+      border: 1px solid #dfe7f0;
+      border-radius: 12px;
+      background: #fbfdff;
+      padding: 16px;
+      margin: 16px 0;
+    }
+    .box h3 {
+      margin: 0 0 10px;
+      color: #004481;
+      font-size: 18px;
+    }
+    .price {
+      font-size: 34px;
+      font-weight: 700;
+      color: #004481;
+      margin: 10px 0;
+    }
+    .small {
+      font-size: 13px;
+      line-height: 1.55;
+      color: #444;
+    }
+    .msglist {
+      margin: 8px 0 0 18px;
+      padding: 0;
+    }
+    .msglist li {
+      margin-bottom: 6px;
+    }
+    .cta {
+      display: block;
+      width: 100%;
+      text-align: center;
+      background: #004481;
+      color: #fff;
+      text-decoration: none;
+      padding: 16px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 24px;
+      margin-top: 18px;
+    }
+    .note {
+      font-size: 12px;
+      color: #666;
+      margin-top: 10px;
+    }
+    .footer {
+      text-align: center;
+      margin-top: 18px;
+      font-size: 12px;
+      color: #777;
+      line-height: 1.5;
+    }
+    .footer a {
+      color: #004481;
+      text-decoration: none;
+    }
   </style>
 </head>
 <body>
