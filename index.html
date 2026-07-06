@@ -196,19 +196,35 @@
     const vence = d.due_date ? new Date(d.due_date).toLocaleDateString('es-MX',{day:'2-digit',month:'long',year:'numeric'}) : '—';
     let html='';
     if(d.method==='bank_account'){
-      html += '<div style="font-weight:bold; color:#004481; margin-bottom:10px;">Transfiere por SPEI</div>';
-      html += fila('Monto exacto', '$'+Number(d.amount).toFixed(2)+' MXN');
-      if(d.bank)  html += fila('Banco', d.bank);
+      html += '<div style="font-weight:bold; color:#004481; font-size:16px; margin-bottom:4px;">Recibo de pago · Transferencia SPEI</div>';
+      html += '<div style="font-size:12px; color:#666; margin-bottom:12px;">Beneficiario: <b>VM Tecnología &amp; Accesorios</b> · Vigencia: <b>'+vence+'</b></div>';
+      html += fila('Monto exacto a pagar', '$'+Number(d.amount).toFixed(2)+' MXN');
+      if(d.bank)  html += fila('Banco destino', d.bank);
       if(d.clabe) html += fila('CLABE', d.clabe);
       if(d.agreement) html += fila('Convenio CIE', d.agreement);
-      html += '<div style="background:#e8f4fd; border:1px solid #b3d7f0; border-radius:6px; padding:10px; font-size:12px; color:#004481; margin-top:6px;">Entra a tu banca en línea y haz una transferencia SPEI a la CLABE por el <b>monto exacto</b>. Se confirma en minutos. Vigencia: <b>'+vence+'</b>.</div>';
-      if(d.spei_pdf) html += '<div style="text-align:center; margin-top:10px;"><a href="'+d.spei_pdf+'" target="_blank" style="color:#004481; font-weight:bold; font-size:13px;">⬇ Descargar recibo (PDF)</a></div>';
+
+      html += '<div style="border:1px solid #e5e7eb; border-radius:8px; padding:12px; margin-top:10px;">';
+      html += '<div style="font-weight:bold; color:#004481; font-size:13px; margin-bottom:6px;">Pasos para realizar el pago</div>';
+      html += '<div style="font-size:12px; color:#333; margin-bottom:10px; line-height:1.6;"><b>Desde BBVA Bancomer:</b><br>1. En el menú "Pagar", elige "De servicios".<br>2. Ingresa el <b>Convenio CIE</b>: '+(d.agreement||'—')+'<br>3. En referencia, escribe la CLABE o el dato que pida.<br>4. Captura el <b>monto exacto</b> y confirma.</div>';
+      html += '<div style="font-size:12px; color:#333; line-height:1.6;"><b>Desde cualquier otro banco:</b><br>1. Entra a "Transferencias / SPEI a otros bancos".<br>2. Agrega la <b>CLABE</b>: '+(d.clabe||'—')+'<br>3. Banco destino: '+(d.bank||'—')+'<br>4. Transfiere el <b>monto exacto</b>. Se acredita en minutos.</div>';
+      html += '</div>';
+
+      html += '<div style="background:#fff8e6; border:1px solid #ffe0a3; border-radius:6px; padding:10px; font-size:12px; color:#8a6d00; margin-top:10px;">⚠️ Transfiere el <b>monto exacto</b> ($'+Number(d.amount).toFixed(2)+'). Un monto distinto puede no acreditarse automáticamente.</div>';
+      if(d.spei_pdf) html += '<div style="text-align:center; margin-top:12px;"><a href="'+d.spei_pdf+'" target="_blank" style="display:inline-block; background:#004481; color:#fff; padding:10px 18px; border-radius:6px; font-weight:bold; font-size:13px; text-decoration:none;">⬇ Descargar recibo oficial (PDF)</a></div>';
     } else {
-      html += '<div style="font-weight:bold; color:#004481; margin-bottom:10px;">Paga en efectivo</div>';
-      html += fila('Monto', '$'+Number(d.amount).toFixed(2)+' MXN');
+      html += '<div style="font-weight:bold; color:#004481; font-size:16px; margin-bottom:4px;">Recibo de pago · Efectivo (PayNet)</div>';
+      html += '<div style="font-size:12px; color:#666; margin-bottom:12px;">Beneficiario: <b>VM Tecnología &amp; Accesorios</b> · Vigencia: <b>'+vence+'</b></div>';
+      html += fila('Total a pagar', '$'+Number(d.amount).toFixed(2)+' MXN');
       if(d.reference) html += fila('Referencia', d.reference);
-      if(d.barcode_url) html += '<div style="text-align:center; margin:10px 0;"><img src="'+d.barcode_url+'" alt="Código de barras" style="max-width:100%; background:#fff; padding:8px; border:1px solid #e5e7eb; border-radius:8px;"></div>';
-      html += '<div style="background:#e8f4fd; border:1px solid #b3d7f0; border-radius:6px; padding:10px; font-size:12px; color:#004481;">Acude a una tienda de la red <b>PayNet</b> (OXXO, farmacias y más), muestra el código de barras o dicta la referencia y paga en efectivo. Vigencia: <b>'+vence+'</b>.</div>';
+      if(d.barcode_url) html += '<div style="text-align:center; margin:10px 0;"><img src="'+d.barcode_url+'" alt="Código de barras" style="max-width:100%; background:#fff; padding:10px; border:1px solid #e5e7eb; border-radius:8px;"><div style="font-size:11px; color:#888; margin-top:4px;">Si el escáner no lee el código, dicta la referencia al cajero.</div></div>';
+
+      html += '<div style="border:1px solid #e5e7eb; border-radius:8px; padding:12px; margin-top:6px;">';
+      html += '<div style="font-weight:bold; color:#004481; font-size:13px; margin-bottom:6px;">Cómo realizar el pago</div>';
+      html += '<div style="font-size:12px; color:#333; line-height:1.7;">1. Acude a cualquier tienda afiliada a la red <b>PayNet</b>.<br>2. Indica al cajero que harás un <b>pago de servicio PayNet</b>.<br>3. Muestra el código de barras o dicta la referencia.<br>4. Paga en efectivo el monto total.<br>5. <b>Conserva tu ticket</b> como comprobante.</div>';
+      html += '</div>';
+
+      html += '<div style="background:#f7f9fc; border:1px solid #e5e7eb; border-radius:8px; padding:10px; margin-top:10px; font-size:11px; color:#555; text-align:center;">Tiendas afiliadas: OXXO · 7-Eleven · Farmacias del Ahorro · Farmacias Benavides · Farmacias Guadalajara · Walmart · Bodega Aurrerá · Sam\'s Club · Circle K · Kiosko · Extra · Waldo\'s y más.<br>Consulta puntos en <a href="https://www.paynet.com.mx/" target="_blank" style="color:#004481;">paynet.com.mx</a></div>';
+      html += '<div style="background:#fff8e6; border:1px solid #ffe0a3; border-radius:6px; padding:10px; font-size:12px; color:#8a6d00; margin-top:10px;">⚠️ El pago en efectivo puede tener un monto máximo por operación y una comisión de la tienda. Válido hasta el <b>'+vence+'</b>.</div>';
     }
     result.innerHTML = html; result.style.display='block';
   }
