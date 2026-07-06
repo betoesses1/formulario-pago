@@ -45,6 +45,15 @@
     <div id="order-amount" style="font-size:20px; font-weight:900;"></div>
   </div>
 
+  <!-- ============ TABS de método ============ -->
+  <div style="display:flex; gap:8px; margin-bottom:16px;">
+    <button type="button" id="tab-card"  onclick="mostrarMetodo('card')"  style="flex:1; padding:10px; border:1px solid #004481; background:#004481; color:#fff; border-radius:8px; font-weight:bold; font-size:13px; cursor:pointer;">Tarjeta</button>
+    <button type="button" id="tab-spei"  onclick="mostrarMetodo('spei')"  style="flex:1; padding:10px; border:1px solid #ccc; background:#fff; color:#333; border-radius:8px; font-weight:bold; font-size:13px; cursor:pointer;">SPEI</button>
+    <button type="button" id="tab-cash"  onclick="mostrarMetodo('cash')"  style="flex:1; padding:10px; border:1px solid #ccc; background:#fff; color:#333; border-radius:8px; font-weight:bold; font-size:13px; cursor:pointer;">Efectivo</button>
+  </div>
+
+  <!-- ============ PANEL TARJETA (tu flujo original) ============ -->
+  <div id="panel-card">
   <form id="payment-form">
     <input type="hidden" name="token_id" id="token_id">
     <input type="hidden" name="device_session_id" id="device_session_id">
@@ -84,6 +93,28 @@
       🔒 PAGAR AHORA
     </button>
   </form>
+  </div>
+
+  <!-- ============ PANEL SPEI / EFECTIVO ============ -->
+  <div id="panel-alt" style="display:none;">
+    <div style="margin-bottom:12px;">
+      <label style="font-size:13px; font-weight:bold; color:#333;">Nombre completo</label><br>
+      <input type="text" id="alt-name" style="width:100%; padding:10px; box-sizing:border-box; border:1px solid #ccc; border-radius:6px; font-size:14px; margin-top:4px;" placeholder="Nombre y apellido">
+    </div>
+    <div style="margin-bottom:12px;">
+      <label style="font-size:13px; font-weight:bold; color:#333;">Correo electrónico</label><br>
+      <input type="email" id="alt-email" style="width:100%; padding:10px; box-sizing:border-box; border:1px solid #ccc; border-radius:6px; font-size:14px; margin-top:4px;" placeholder="correo@ejemplo.com">
+    </div>
+
+    <div id="alt-error" style="display:none; background:#fff0f0; border:1px solid #ffcccc; color:#cc0000; border-radius:6px; padding:10px; margin-bottom:12px; font-size:13px;"></div>
+
+    <button type="button" id="alt-button" onclick="generarReferencia()" style="width:100%; background:#004481; color:white; padding:14px; border:none; border-radius:6px; cursor:pointer; font-weight:bold; font-size:16px;">
+      Generar referencia de pago
+    </button>
+
+    <!-- Resultado -->
+    <div id="alt-result" style="display:none; margin-top:18px; border-top:1px solid #eee; padding-top:16px;"></div>
+  </div>
 
   <div style="text-align:center; margin-top:16px; font-size:11px; color:#999;">
     <p style="margin:4px 0;">🔒 Conexión segura SSL · Tus datos están protegidos</p>
@@ -92,16 +123,99 @@
 </div>
 
 <script type="text/javascript">
+  // ⚙️ Backend: las funciones viven en el Netlify de pagos (plural)
+  const API_BASE = "https://pagos.tiendasvm.com.mx";
+
   // Leer parámetros de la URL
   const params = new URLSearchParams(window.location.search);
   const orderId = params.get('order_id');
   const amount = params.get('amount');
   const description = params.get('description') || 'Pedido Tiendas VM';
 
-  // Mostrar info del pedido
   document.getElementById('order-desc').textContent = description;
   document.getElementById('order-amount').textContent = amount ? '$' + parseFloat(amount).toFixed(2) + ' MXN' : '';
 
+  // ---- Cambio de método (tabs) ----
+  let metodoAlt = null; // 'bank_account' o 'store'
+  function mostrarMetodo(m){
+    const tabs = {card:'tab-card', spei:'tab-spei', cash:'tab-cash'};
+    Object.values(tabs).forEach(id=>{
+      const b=document.getElementById(id);
+      b.style.background='#fff'; b.style.color='#333'; b.style.borderColor='#ccc';
+    });
+    const activo=document.getElementById(tabs[m]);
+    activo.style.background='#004481'; activo.style.color='#fff'; activo.style.borderColor='#004481';
+
+    document.getElementById('panel-card').style.display = (m==='card')?'block':'none';
+    document.getElementById('panel-alt').style.display  = (m==='card')?'none':'block';
+    document.getElementById('alt-result').style.display = 'none';
+    document.getElementById('alt-error').style.display  = 'none';
+
+    if(m==='spei'){ metodoAlt='bank_account'; document.getElementById('alt-button').textContent='Generar CLABE para transferir'; }
+    if(m==='cash'){ metodoAlt='store'; document.getElementById('alt-button').textContent='Generar referencia de efectivo'; }
+  }
+
+  // ---- Generar referencia SPEI / efectivo ----
+  function generarReferencia(){
+    const err = document.getElementById('alt-error');
+    const result = document.getElementById('alt-result');
+    err.style.display='none'; result.style.display='none';
+
+    const name = document.getElementById('alt-name').value.trim();
+    const email = document.getElementById('alt-email').value.trim();
+    if(!amount || parseFloat(amount)<=0){ return mostrarErr('Este enlace no trae un monto válido.'); }
+    if(!name || !email){ return mostrarErr('Escribe tu nombre y correo.'); }
+
+    const btn = document.getElementById('alt-button');
+    btn.disabled=true; const txtOrig=btn.textContent; btn.textContent='⏳ Generando...';
+
+    fetch(API_BASE + '/.netlify/functions/openpay-create-charge', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ method:metodoAlt, amount:amount, order_id:orderId, description:description, name:name, email:email })
+    })
+    .then(r=>r.json())
+    .then(d=>{
+      if(!d.ok){ throw new Error(d.error || 'No se pudo generar la referencia.'); }
+      pintarResultado(d);
+    })
+    .catch(e=> mostrarErr(e.message))
+    .finally(()=>{ btn.disabled=false; btn.textContent=txtOrig; });
+  }
+
+  function mostrarErr(msg){ const e=document.getElementById('alt-error'); e.innerHTML='⚠️ '+msg; e.style.display='block'; }
+
+  function fila(k,v){
+    return '<div style="display:flex; justify-content:space-between; align-items:center; gap:10px; background:#f7f9fc; border:1px solid #e5e7eb; border-radius:8px; padding:10px 12px; margin-bottom:8px;">'
+      + '<div><div style="font-size:11px; color:#888; text-transform:uppercase; letter-spacing:.04em;">'+k+'</div>'
+      + '<div style="font-size:15px; font-weight:bold; color:#222; word-break:break-all;">'+v+'</div></div>'
+      + '<button onclick="copiar(\''+String(v).replace(/'/g,"")+'\',this)" style="font-size:11px; font-weight:bold; color:#004481; background:#fff; border:1px solid #004481; border-radius:6px; padding:6px 10px; cursor:pointer;">Copiar</button></div>';
+  }
+
+  function pintarResultado(d){
+    const result = document.getElementById('alt-result');
+    const vence = d.due_date ? new Date(d.due_date).toLocaleDateString('es-MX',{day:'2-digit',month:'long',year:'numeric'}) : '—';
+    let html='';
+    if(d.method==='bank_account'){
+      html += '<div style="font-weight:bold; color:#004481; margin-bottom:10px;">Transfiere por SPEI</div>';
+      html += fila('Monto exacto', '$'+Number(d.amount).toFixed(2)+' MXN');
+      if(d.bank)  html += fila('Banco', d.bank);
+      if(d.clabe) html += fila('CLABE', d.clabe);
+      if(d.agreement) html += fila('Convenio CIE', d.agreement);
+      html += '<div style="background:#e8f4fd; border:1px solid #b3d7f0; border-radius:6px; padding:10px; font-size:12px; color:#004481; margin-top:6px;">Entra a tu banca en línea y haz una transferencia SPEI a la CLABE por el <b>monto exacto</b>. Se confirma en minutos. Vigencia: <b>'+vence+'</b>.</div>';
+      if(d.spei_pdf) html += '<div style="text-align:center; margin-top:10px;"><a href="'+d.spei_pdf+'" target="_blank" style="color:#004481; font-weight:bold; font-size:13px;">⬇ Descargar recibo (PDF)</a></div>';
+    } else {
+      html += '<div style="font-weight:bold; color:#004481; margin-bottom:10px;">Paga en efectivo</div>';
+      html += fila('Monto', '$'+Number(d.amount).toFixed(2)+' MXN');
+      if(d.reference) html += fila('Referencia', d.reference);
+      if(d.barcode_url) html += '<div style="text-align:center; margin:10px 0;"><img src="'+d.barcode_url+'" alt="Código de barras" style="max-width:100%; background:#fff; padding:8px; border:1px solid #e5e7eb; border-radius:8px;"></div>';
+      html += '<div style="background:#e8f4fd; border:1px solid #b3d7f0; border-radius:6px; padding:10px; font-size:12px; color:#004481;">Acude a una tienda de la red <b>PayNet</b> (OXXO, farmacias y más), muestra el código de barras o dicta la referencia y paga en efectivo. Vigencia: <b>'+vence+'</b>.</div>';
+    }
+    result.innerHTML = html; result.style.display='block';
+  }
+
+  function copiar(txt,btn){ navigator.clipboard.writeText(txt).then(()=>{ const o=btn.textContent; btn.textContent='✓'; setTimeout(()=>btn.textContent=o,1200); }); }
+
+  // ================= FLUJO TARJETA (original, con dominio completo) =================
   OpenPay.setId('mcu1a7seu2rgu8lpnwes');
   OpenPay.setApiKey('pk_0839ce6f35684fbcae24b1940f079694');
   OpenPay.setSandboxMode(false);
@@ -129,7 +243,6 @@
     '3011':'Tarjeta rechazada. Comuníquese con su banco e inténtelo de nuevo.',
     'default':'Transacción fallida. Comuníquese con su banco e ingrese sus datos correctamente.'
   };
-
   function obtenerMensaje(codigo) { return mensajesError[String(codigo)] || mensajesError['default']; }
 
   $('#payment-form').on('submit', function(e) {
@@ -138,8 +251,7 @@
     $('#pay-button').prop('disabled', true).text('⏳ Procesando...');
 
     OpenPay.token.extractFormAndCreate('payment-form', function(response) {
-      // Token creado, ahora enviamos al servidor
-      fetch('/.netlify/functions/create-charge', {
+      fetch(API_BASE + '/.netlify/functions/create-charge', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
