@@ -223,13 +223,73 @@
       html += '<div style="font-size:12px; color:#333; line-height:1.7;">1. Acude a cualquier tienda afiliada a la red <b>PayNet</b>.<br>2. Indica al cajero que harás un <b>pago de servicio PayNet</b>.<br>3. Muestra el código de barras o dicta la referencia.<br>4. Paga en efectivo el monto total.<br>5. <b>Conserva tu ticket</b> como comprobante.</div>';
       html += '</div>';
 
-      html += '<div style="background:#f7f9fc; border:1px solid #e5e7eb; border-radius:8px; padding:10px; margin-top:10px; font-size:11px; color:#555; text-align:center;">Tiendas afiliadas: OXXO · 7-Eleven · Farmacias del Ahorro · Farmacias Benavides · Farmacias Guadalajara · Walmart · Bodega Aurrerá · Sam\'s Club · Circle K · Kiosko · Extra · Waldo\'s y más.<br>Consulta puntos en <a href="https://www.paynet.com.mx/" target="_blank" style="color:#004481;">paynet.com.mx</a></div>';
+      html += '<div style="background:#f7f9fc; border:1px solid #e5e7eb; border-radius:8px; padding:12px 10px; margin-top:10px; text-align:center;">'
+        + '<div style="font-size:11px; color:#888; margin-bottom:8px;">Pago en efectivo a través de la red</div>'
+        + '<div style="margin-bottom:10px;"><img src="https://raw.githubusercontent.com/betoesses1/Formulario-Pago/main/paynet.png" alt="PayNet by Openpay" style="height:40px; object-fit:contain;" onerror="this.style.display=\'none\';"></div>'
+        + '<div style="font-size:11px; color:#888; margin-bottom:8px;">Disponible en:</div>'
+        + '<div style="display:flex; flex-wrap:wrap; justify-content:center; align-items:center; gap:8px;">'
+        + logoTienda('7eleven.jpg','7-Eleven')
+        + logoTienda('bodegaAurrera.jpg','Bodega Aurrerá')
+        + logoTienda('circlek.jpg','Circle K')
+        + logoTienda('farmaciaAhorro.jpg','Farmacias del Ahorro')
+        + logoTienda('walmart.jpg','Walmart')
+        + '</div>'
+        + '<div style="font-size:11px; color:#888; margin-top:8px;">Consulta todos los puntos en <a href="https://www.paynet.com.mx/" target="_blank" style="color:#004481;">paynet.com.mx</a></div>'
+        + '</div>';
       html += '<div style="background:#fff8e6; border:1px solid #ffe0a3; border-radius:6px; padding:10px; font-size:12px; color:#8a6d00; margin-top:10px;">⚠️ El pago en efectivo puede tener un monto máximo por operación y una comisión de la tienda. Válido hasta el <b>'+vence+'</b>.</div>';
+      datosEfectivo = { amount:d.amount, reference:d.reference||'', barcode_url:d.barcode_url||'', vence:vence, desc:description, order:orderId||'' };
+      html += '<div style="text-align:center; margin-top:12px;"><button type="button" onclick="descargarComprobanteEfectivo()" style="display:inline-block; background:#004481; color:#fff; padding:10px 18px; border:none; border-radius:6px; font-weight:bold; font-size:13px; cursor:pointer;">⬇ Descargar comprobante (PDF)</button></div>';
     }
     result.innerHTML = html; result.style.display='block';
   }
 
   function copiar(txt,btn){ navigator.clipboard.writeText(txt).then(()=>{ const o=btn.textContent; btn.textContent='✓'; setTimeout(()=>btn.textContent=o,1200); }); }
+
+  // ---- Logo de tienda afiliada (desde GitHub; si falta la imagen, muestra el nombre) ----
+  function logoTienda(archivo, nombre){
+    const base = 'https://raw.githubusercontent.com/betoesses1/Formulario-Pago/main/';
+    return '<div style="background:#fff; border:1px solid #e5e7eb; border-radius:6px; width:74px; height:44px; display:flex; align-items:center; justify-content:center; padding:5px;">'
+      + '<img src="'+base+archivo+'" alt="'+nombre+'" title="'+nombre+'" style="max-width:100%; max-height:100%; object-fit:contain;" '
+      + 'onerror="this.style.display=\'none\'; this.parentNode.innerHTML=\'<span style=&quot;font-size:9px;color:#666;text-align:center;&quot;>'+nombre+'</span>\';"></div>';
+  }
+
+  // ---- Comprobante descargable de EFECTIVO (lo genera la propia página) ----
+  let datosEfectivo = null;
+  function descargarComprobanteEfectivo(){
+    if(!datosEfectivo){ return; }
+    const d = datosEfectivo;
+    const w = window.open('', '_blank');
+    if(!w){ alert('Permite las ventanas emergentes para descargar el comprobante.'); return; }
+    const html = ''
+      + '<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Comprobante de pago en efectivo</title>'
+      + '<style>*{box-sizing:border-box;margin:0;padding:0;font-family:Arial,sans-serif;} body{padding:28px;color:#222;}'
+      + '.hdr{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid #004481;padding-bottom:14px;margin-bottom:18px;}'
+      + '.hdr h1{color:#004481;font-size:20px;} .hdr .r{text-align:right;font-size:12px;color:#666;}'
+      + '.tot{background:#004481;color:#fff;border-radius:8px;padding:16px 20px;text-align:center;margin:16px 0;}'
+      + '.tot .l{font-size:12px;opacity:.85;} .tot .v{font-size:30px;font-weight:900;}'
+      + '.row{display:flex;justify-content:space-between;border:1px solid #e5e7eb;border-radius:8px;padding:10px 14px;margin-bottom:8px;font-size:14px;}'
+      + '.row b{color:#004481;} .bc{text-align:center;margin:16px 0;} .bc img{max-width:100%;}'
+      + '.steps{border:1px solid #e5e7eb;border-radius:8px;padding:14px;font-size:12.5px;line-height:1.8;}'
+      + '.steps h3{color:#004481;font-size:14px;margin-bottom:6px;} .foot{margin-top:20px;font-size:11px;color:#777;text-align:center;border-top:1px solid #eee;padding-top:12px;}'
+      + '@media print{.noprint{display:none;}}</style></head><body>'
+      + '<div class="hdr"><div><h1>Comprobante de pago en efectivo</h1><div style="font-size:12px;color:#666;margin-top:4px;">VM Tecnología &amp; Accesorios</div></div>'
+      + '<div class="r">Pedido: '+ (d.order||'—') +'<br>Concepto: '+ d.desc +'<br>Vigencia: <b>'+ d.vence +'</b></div></div>'
+      + '<div class="tot"><div class="l">Total a pagar / MXN</div><div class="v">$'+ Number(d.amount).toFixed(2) +'</div></div>'
+      + '<div class="row"><span>Referencia</span><b>'+ d.reference +'</b></div>'
+      + (d.barcode_url ? '<div class="bc"><img src="'+ d.barcode_url +'" alt="Código de barras"><div style="font-size:11px;color:#888;">Si el escáner no lee el código, dicta la referencia al cajero.</div></div>' : '')
+      + '<div class="steps"><h3>Cómo realizar el pago</h3>'
+      + '1. Acude a una tienda afiliada a la red <b>PayNet</b> (OXXO, 7-Eleven, farmacias, Walmart y más).<br>'
+      + '2. Indica al cajero que harás un <b>pago de servicio PayNet</b>.<br>'
+      + '3. Muestra el código de barras o dicta la referencia.<br>'
+      + '4. Paga en efectivo el monto total.<br>'
+      + '5. <b>Conserva tu ticket</b> como comprobante.</div>'
+      + '<div class="foot">Si tienes dudas comunícate a VM Tecnología &amp; Accesorios · Tel. 5539155167 · atnclientes@tiendasvm.com.mx<br>Pago procesado por Openpay (BBVA).</div>'
+      + '<div class="noprint" style="text-align:center;margin-top:20px;"><button onclick="window.print()" style="background:#004481;color:#fff;border:none;border-radius:6px;padding:12px 22px;font-size:14px;font-weight:bold;cursor:pointer;">🖨️ Guardar como PDF / Imprimir</button></div>'
+      + '<scr'+'ipt>window.onload=function(){ var img=document.querySelector("img"); if(img && !img.complete){ img.onload=function(){setTimeout(function(){window.print();},300);}; } else { setTimeout(function(){window.print();},400); } };</scr'+'ipt>'
+      + '</body></html>';
+    w.document.write(html);
+    w.document.close();
+  }
 
   // ================= FLUJO TARJETA (original, con dominio completo) =================
   OpenPay.setId('mcu1a7seu2rgu8lpnwes');
